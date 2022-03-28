@@ -9,13 +9,14 @@ using MessageBoard.Models;
 
 namespace MessageBoard.Controllers
 {
-  [Route("api/[controller]")]
+  [Route("api/1.0/Messages")]
   [ApiController]
-  public class MessagesController : ControllerBase
+  [ApiVersion("1.0")]
+  public class MessagesV1Controller : ControllerBase
   {
     private readonly MessageBoardContext _db;
 
-    public MessagesController(MessageBoardContext db)
+    public MessagesV1Controller(MessageBoardContext db)
     {
       _db = db;
     }
