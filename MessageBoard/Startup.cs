@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using MessageBoard.Models;
 
+using Microsoft.AspNetCore.Mvc;
+
+
 namespace MessageBoard
 {
     public class Startup
@@ -23,6 +26,11 @@ namespace MessageBoard
             services.AddDbContext<MessageBoardContext>(opt =>
                 opt.UseMySql(Configuration["ConnectionStrings:DefaultConnection"], ServerVersion.AutoDetect(Configuration["ConnectionStrings:DefaultConnection"])));
             services.AddControllers();
+            services.AddApiVersioning(o => {
+                o.ReportApiVersions = true;
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.DefaultApiVersion = new ApiVersion(1, 0);
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -33,6 +41,9 @@ namespace MessageBoard
             }
 
             // app.UseHttpsRedirection();
+
+            // JWT Config
+            app.UseAuthentication();
 
             app.UseRouting();
 
