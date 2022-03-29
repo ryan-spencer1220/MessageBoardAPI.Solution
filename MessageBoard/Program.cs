@@ -21,6 +21,6 @@ namespace MessageBoard
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                });      
     }
 }
