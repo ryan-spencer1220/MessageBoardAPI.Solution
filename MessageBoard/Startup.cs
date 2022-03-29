@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using MessageBoard.Models;
-
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -31,17 +31,27 @@ namespace MessageBoard
                         builder.WithOrigins("https://localhost:5001", "http://localhost:5000");
                     });
             });
-                services.AddDbContext<MessageBoardContext>(opt =>
-                    opt.UseMySql(Configuration["ConnectionStrings:DefaultConnection"], ServerVersion.AutoDetect(Configuration["ConnectionStrings:DefaultConnection"])));
-                services.AddControllers();
-                // Add API Versioning
-                services.AddApiVersioning(o => {
-                    o.ReportApiVersions = true;
-                    o.AssumeDefaultVersionWhenUnspecified = true;
-                    o.DefaultApiVersion = new ApiVersion(1, 0);
-                    });
-                services.AddSwaggerGen();
-            }
+            services.AddDbContext<MessageBoardContext>(opt =>
+                opt.UseMySql(Configuration["ConnectionStrings:DefaultConnection"], ServerVersion.AutoDetect(Configuration["ConnectionStrings:DefaultConnection"])));
+            services.AddControllers();
+            // Add API Versioning
+            services.AddApiVersioning(o => {
+                o.ReportApiVersions = true;
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.DefaultApiVersion = new ApiVersion(1, 0);
+                });
+            // Add Swagger
+            services.AddSwaggerGen();
+            // Add Pagination
+            services.AddHttpContextAccessor();
+            services.AddSingleton<IUriService>(o =>
+            {
+                var accessor = o.GetRequiredService<IHttpContextAccessor>();
+                var request = accessor.HttpContext.Request;
+                var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+                return new UriService(uri);
+            });
+          }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

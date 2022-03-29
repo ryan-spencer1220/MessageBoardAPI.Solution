@@ -16,24 +16,36 @@ namespace MessageBoard.Controllers
   public class MessagesV1Controller : ControllerBase
   {
     private readonly MessageBoardContext _db;
+    private readonly IUriService uriService;
 
-    public MessagesV1Controller(MessageBoardContext db)
+    public MessagesV1Controller(MessageBoardContext db, IUriService uriService)
     {
       _db = db;
+      // Pagination
+      this.uriService = uriService;
     }
 
     // GET api/messages
     [EnableCors("Policy")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Message>>> Get(string author)
+    public async Task<ActionResult<IEnumerable<Message>>> Get([FromQuery] PaginationFilter filter, string author)
     {
+      var route = Request.Path.Value;
       var query = _db.Messages.AsQueryable();
-
+      // Pagination
+      var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+      var pagedData = await _db.Messages
+        .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+        .Take(validFilter.PageSize)
+        .ToListAsync();
+      var totalRecords = await _db.Messages.CountAsync();
       if (author != null)
       {
         query = query.Where(entry => entry.Author == author);
       }
-      return await query.ToListAsync();
+      // var pagedReponse = 
+      return Ok(PaginationHelper.CreatePagedReponse<Message>(pagedData, validFilter, totalRecords, uriService, route));
+      // return await query.ToListAsync();
     }
 
     // POST api/messages
