@@ -6,7 +6,7 @@
 
 ### 📖 Description
 
-An API that functions as a message board API. Users can return message board posts based on author information or message category.
+C# API application designed to make details regarding specific message board posts availble to users (date, title, body, author, group). Users can return message board posts based on author information or message category.
 
 ### 🦠 Known Bugs
 

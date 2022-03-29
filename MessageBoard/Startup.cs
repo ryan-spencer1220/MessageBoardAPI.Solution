@@ -22,17 +22,26 @@ namespace MessageBoard
 
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddDbContext<MessageBoardContext>(opt =>
-                opt.UseMySql(Configuration["ConnectionStrings:DefaultConnection"], ServerVersion.AutoDetect(Configuration["ConnectionStrings:DefaultConnection"])));
-            services.AddControllers();
-            services.AddApiVersioning(o => {
-                o.ReportApiVersions = true;
-                o.AssumeDefaultVersionWhenUnspecified = true;
-                o.DefaultApiVersion = new ApiVersion(1, 0);
-                });
-            services.AddSwaggerGen();
-        }
+          // Enable CORS policy for specific websites/servers
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Policy",
+                    builder =>
+                    {
+                        builder.WithOrigins("https://localhost:5001", "http://localhost:5000");
+                    });
+            });
+                services.AddDbContext<MessageBoardContext>(opt =>
+                    opt.UseMySql(Configuration["ConnectionStrings:DefaultConnection"], ServerVersion.AutoDetect(Configuration["ConnectionStrings:DefaultConnection"])));
+                services.AddControllers();
+                // Add API Versioning
+                services.AddApiVersioning(o => {
+                    o.ReportApiVersions = true;
+                    o.AssumeDefaultVersionWhenUnspecified = true;
+                    o.DefaultApiVersion = new ApiVersion(1, 0);
+                    });
+                services.AddSwaggerGen();
+            }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -59,6 +68,9 @@ namespace MessageBoard
             );
 
             app.UseAuthorization();
+
+          // Enable CORS policy for specific websites/servers
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {

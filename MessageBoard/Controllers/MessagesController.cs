@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MessageBoard.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace MessageBoard.Controllers
 {
@@ -22,6 +23,7 @@ namespace MessageBoard.Controllers
     }
 
     // GET api/messages
+    [EnableCors("Policy")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Message>>> Get(string author)
     {
