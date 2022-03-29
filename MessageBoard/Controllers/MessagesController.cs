@@ -34,16 +34,22 @@ namespace MessageBoard.Controllers
       var query = _db.Messages.AsQueryable();
       // Pagination
       var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-      var pagedData = await _db.Messages
-        .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
-        .Take(validFilter.PageSize)
-        .ToListAsync();
-      var totalRecords = await _db.Messages.CountAsync();
+
+      
       if (author != null)
       {
         query = query.Where(entry => entry.Author == author);
       }
-      // var pagedReponse = 
+
+      var pagedData = await query
+        .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+        .Take(validFilter.PageSize)
+        .ToListAsync();
+      var totalRecords = await _db.Messages.CountAsync();
+      // if (author != null)
+      // {
+      //   query = query.Where(entry => entry.Author == author);
+      // }
       return Ok(PaginationHelper.CreatePagedReponse<Message>(pagedData, validFilter, totalRecords, uriService, route));
       // return await query.ToListAsync();
     }

@@ -7,12 +7,12 @@ namespace MessageBoard.Models
       public PaginationFilter()
       {
           this.PageNumber = 1;
-          this.PageSize = 1;
+          this.PageSize = 2;
       }
       public PaginationFilter(int pageNumber, int pageSize)
       {
           this.PageNumber = pageNumber < 1 ? 1 : pageNumber;
-          this.PageSize = pageSize > 1 ? 1 : pageSize;
+          this.PageSize = pageSize > 2 ? 2 : pageSize;
       }
   }
 }
